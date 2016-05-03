@@ -13,7 +13,9 @@ namespace MVCMusicStore
     {
         protected void Application_Start()
         {
+            //  Inject method for Database initialization (adding sample data)
             Database.SetInitializer(new MVCMusicStore.Models.SampleData());
+
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

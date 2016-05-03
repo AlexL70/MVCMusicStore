@@ -2,21 +2,18 @@
 using System.Web.Mvc;
 using MVCMusicStore.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MVCMusicStore.Controllers
 {
     public class StoreController : Controller
     {
+        MusicStoreEntities db = new MusicStoreEntities();
+
         // GET: Store
         public ActionResult Index()
         {
-            var genres = new List<Genre> {
-                new Genre { Name = "Blues" },
-                new Genre { Name = "Country" },
-                new Genre { Name = "Disco" },
-                new Genre { Name = "Jazz" },
-                new Genre { Name = "Rock" },
-            };
+            var genres = db.Genres.ToList();
             return View(genres);
         }
 
