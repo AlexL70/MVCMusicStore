@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using MVCMusicStore.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.Entity;
 
 namespace MVCMusicStore.Controllers
 {
@@ -20,14 +21,15 @@ namespace MVCMusicStore.Controllers
         // GET: Store/Browse?genre=Blues
         public ActionResult Browse(string genre)
         {
-            var genreModel = new Genre { Name = genre };
+            var genreModel = db.Genres.Where(g => g.Name == genre)
+                .Include(g => g.Albums).Single();
             return View(genreModel);
         }
 
         // GET: Store/Details/5
         public ActionResult Details(int id)
         {
-            var album = new Album { Title = $"Album {id}" };
+            var album = db.Albums.Find(id);
             return View(album);
         }
     }

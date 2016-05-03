@@ -1,4 +1,5 @@
-﻿@model MVCMusicStore.Models.Genre
+﻿@using MVCMusicStore.Controllers;
+@model MVCMusicStore.Models.Genre
 
 @{
     ViewBag.Title = "Browse";
@@ -6,3 +7,11 @@
 
 <h2>Browsing Genre: @Model.Name</h2>
 
+<ul>
+    @foreach (var album in Model.Albums)
+    {
+        <li>
+            @Html.ActionLink(album.Title, nameof(StoreController.Details), new { id = album.AlbumId })
+        </li>
+    }
+</ul>
