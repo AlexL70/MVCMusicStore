@@ -32,5 +32,14 @@ namespace MVCMusicStore.Controllers
             var album = db.Albums.Find(id);
             return View(album);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if(disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
 }
