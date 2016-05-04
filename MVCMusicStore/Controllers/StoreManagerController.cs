@@ -44,22 +44,26 @@ namespace MVCMusicStore.Controllers
             return View();
         }
 
+        private const string CreateActionBindAttribute = nameof(Album.AlbumId) + "," +
+            nameof(Album.GenreId) + "," + nameof(Album.ArtistId) + "," +
+            nameof(Album.Title) + "," + nameof(Album.Price) + "," + 
+            nameof(Album.AlbumArtUrl);
         // POST: StoreManager/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "AlbumId,GenreId,ArtistId,Title,Price,AlbumArtUrl")] Album album)
+        public ActionResult Create([Bind(Include = CreateActionBindAttribute)] Album album)
         {
             if (ModelState.IsValid)
             {
                 db.Albums.Add(album);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(this.Index));
             }
 
-            ViewBag.ArtistId = new SelectList(db.Artists, "ArtistId", "Name", album.ArtistId);
-            ViewBag.GenreId = new SelectList(db.Genres, "GenreId", "Name", album.GenreId);
+            ViewBag.ArtistId = new SelectList(db.Artists, nameof(Artist.ArtistId), nameof(Artist.Name), album.ArtistId);
+            ViewBag.GenreId = new SelectList(db.Genres, nameof(Genre.GenreId), nameof(Genre.Name), album.GenreId);
             return View(album);
         }
 
