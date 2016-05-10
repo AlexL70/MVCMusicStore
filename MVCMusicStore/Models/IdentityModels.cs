@@ -21,7 +21,7 @@ namespace MVCMusicStore.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base(nameof(MusicStoreEntities), throwIfV1Schema: false)
         {
         }
 
