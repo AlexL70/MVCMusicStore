@@ -1,6 +1,6 @@
 ﻿namespace MVCMusicStore.ViewModels
 {
-    class ShoppingCartRemoveViewModel
+    public class ShoppingCartRemoveViewModel
     {
         public string Message { get; set; }
         public decimal CartTotal { get; set; }
