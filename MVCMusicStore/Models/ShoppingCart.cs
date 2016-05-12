@@ -106,9 +106,9 @@ namespace MVCMusicStore.Models
         //  Returns the cart's total (value of all albums on the cart)
         public decimal GetTotal()
         {
-            decimal? sum = db.Carts.Where(c => c.CartId == ShoppingCartId)
+            decimal? total = db.Carts.Where(c => c.CartId == ShoppingCartId)
                 .Select(c => (int?)c.Count * c.Album.Price).Sum();
-            return sum ?? 0;
+            return total ?? decimal.Zero;
         }
 
         //  Creates new order out of shopping cart and returns OrderId
