@@ -88,7 +88,7 @@ namespace MVCMusicStore.Controllers
             {
                 case SignInStatus.Success:
                     {
-                        MigrateShoppingCart(model.Email);
+                        MigrateShoppingCart(User.Identity.Name);
                         return RedirectToLocal(returnUrl);
                     }
                 case SignInStatus.LockedOut:
