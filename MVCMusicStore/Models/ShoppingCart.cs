@@ -168,15 +168,15 @@ namespace MVCMusicStore.Models
 
         //  Migrate shopping cart created by anonymous user to his/her
         //  real user name after user logged in
-        public void MigrateCart(string UserName)
+        public void MigrateCart(string userName)
         {
             var shoppingCart = db.Carts.Where(c => c.CartId == ShoppingCartId);
             foreach (var item in shoppingCart)
             {
-                item.CartId = UserName;
+                item.CartId = userName;
             }
             db.SaveChanges();
-            ShoppingCartId = UserName;
+            ShoppingCartId = userName;
         }
     }
 }

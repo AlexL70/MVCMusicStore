@@ -52,6 +52,14 @@ namespace MVCMusicStore.Controllers
             }
         }
 
+        private void MigrateShoppingCart(string userName)
+        {
+            //  Associate shopping cart items with logged-in user
+            var cart = ShoppingCart.GetCart(this);
+            cart.MigrateCart(userName);
+            Session[ShoppingCart.CartSessionKey] = userName;
+        }
+
         //
         // GET: /Account/Login
         [AllowAnonymous]
@@ -79,7 +87,10 @@ namespace MVCMusicStore.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    {
+                        MigrateShoppingCart(model.Email);
+                        return RedirectToLocal(returnUrl);
+                    }
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -156,14 +167,15 @@ namespace MVCMusicStore.Controllers
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+                    MigrateShoppingCart(user.UserName);
+                    return RedirectToAction(nameof(HomeController.Index), "Home");
                 }
                 AddErrors(result);
             }
