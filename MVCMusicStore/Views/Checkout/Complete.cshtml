@@ -1,0 +1,15 @@
+﻿@using MVCMusicStore.Controllers
+
+    @model int
+    @{
+        ViewBag.Title = "Checkout complete";
+    }
+
+    <h2>Checkout complete</h2>
+
+    <p>Thank you for your order! Your order number is: @Model</p>
+
+    <p>
+        How about shopping for some more music in our
+        @Html.ActionLink("store", nameof(StoreController.Index), "Store")
+    </p>
