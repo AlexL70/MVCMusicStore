@@ -31,8 +31,8 @@ namespace MVCMusicStore.Models
         [MaxLength(40), Required(ErrorMessage = "Country is required.")]
         public string Country { get; set; }
         [MaxLength(24), Required(ErrorMessage = "Phone is required."),
-            DataType(DataType.PhoneNumber), RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$",
-            ErrorMessage = "Phone number is not valid. Proper format is (XXX)-XXX-XXXX")]
+            DataType(DataType.PhoneNumber), RegularExpression(@"^\(?([0-9]{2})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$",
+            ErrorMessage = "Phone number is not valid. Proper format is (XX)-XXX-XXXX")]
         public string Phone { get; set; }
         [Required(ErrorMessage = "Email Address is required"), 
             Display(Name = "Email Address"), EmailAddress(ErrorMessage = "Email Address is not valid.")]
