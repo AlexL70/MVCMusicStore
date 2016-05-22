@@ -68,5 +68,14 @@ namespace MVCMusicStore.Controllers
             ViewData[$"{nameof(Cart)}{nameof(Cart.Count)}"] = cart.GetCount();
             return PartialView(nameof(this.CartSummary));
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
 }

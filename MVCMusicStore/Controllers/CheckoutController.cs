@@ -67,5 +67,14 @@ namespace MVCMusicStore.Controllers
                 return View("Error");
             }
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
 }
