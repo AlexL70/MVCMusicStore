@@ -1,0 +1,15 @@
+﻿@using MVCMusicStore.Controllers
+
+@model IEnumerable<MVCMusicStore.Models.Genre>
+
+<ul id="categories">
+
+    <li><h2>Genres:</h2></li>
+    @foreach (var genre in Model)
+    {
+        <li>
+            @Html.ActionLink(genre.Name, "Browse", "Store", new { Genre = genre.Name }, null)
+        </li>
+    }
+
+</ul>

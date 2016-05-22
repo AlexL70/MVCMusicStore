@@ -19,11 +19,15 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("ASP.NET MVC Music Store", nameof(StoreController.Index), "Store", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("ASP.NET MVC Music Store", nameof(HomeController.Index), "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Home", nameof(HomeController.Index), "Home")</li>
+                    <li>@Html.ActionLink("Store", nameof(StoreController.Index), "Store")</li>
+                    @*<li>@Html.ActionLink("Cart", nameof(ShoppingCartController.Index), "ShoppingCart")</li>*@
+                    <li>@{ Html.RenderAction("CartSummary", "ShoppingCart"); }</li>
+                    <li>@Html.ActionLink("Admin", nameof(StoreManagerController.Index), "StoreManager")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                 </ul>
@@ -31,17 +35,20 @@
             </div>
         </div>
     </div>
-    <div class="container body-content">
-        @*<div id="header">
-            <h1> ASP.NET MVC MUSIC STORE</h1>
-            <ul id="navlist">
-                <li class="first"><a href="/" id="current">Home</a></li>
-                <li><a href="/Store/">Store</a></li>
-            </ul>
-        </div>*@
-        @RenderBody()
-        <hr />
-        <footer>
+
+    <div class="container">
+        <div class="row">
+            <div id="genres-div" class="col-md-2 col-sm-4 col-sx-12">
+                @{Html.RenderAction("GenreMenu", "Store"); }
+            </div>
+            <div class="body-content col-md-9 col-sm-6 col-sx-12">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <footer class="modal-footer">
             <p>&copy; @DateTime.Now.Year - ASP.NET MVC Music Store</p>
         </footer>
     </div>

@@ -66,7 +66,7 @@ namespace MVCMusicStore.Controllers
         {
             var cart = ShoppingCart.GetCart(this);
             ViewData[$"{nameof(Cart)}{nameof(Cart.Count)}"] = cart.GetCount();
-            return PartialView("CartSummary");  //  TODO - replace with real view name (type safe)
+            return PartialView(nameof(this.CartSummary));
         }
     }
 }

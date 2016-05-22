@@ -239,14 +239,23 @@ a:active
 
 /***************************** sidebar navigation ****************************/
 
+#genres-div {
+	border-right: #5d5a53 1px dotted;
+	padding-right: 10px;
+    padding-top: 70px;
+    /*height: 590px;*/
+	margin: 0 25px 0 0;
+	float: left;
+}
+
+footer {
+
+}
+
 #categories
 {
 	font-family: Constantia, Georgia, serif;
 	list-style-type: none;
-	border-right: #5d5a53 1px dotted;
-	padding-right: 10px;
-	margin: 0 25px 0 0;
-	float: left;
 }
 
 #categories a:link, #categories a:visited

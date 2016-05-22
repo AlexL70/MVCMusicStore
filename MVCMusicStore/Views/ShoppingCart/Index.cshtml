@@ -15,7 +15,7 @@
 
             if (recordToDelete != '') {
                 //  Perform the AJAX post
-                $.post("/ShoppingCart/RemoveFromCart", {"recordId": recordToDelete},
+                $.post("/ShoppingCart/RemoveFromCart", { "recordId": recordToDelete },
                     function (data) {
                         //  Successful request gets here
                         //  Update the page elements
@@ -51,43 +51,47 @@
     }
 </script>
 
-<h3><em>Review</em> your cart:</h3>
 
-<p class="button">
-    @Html.ActionLink("Checkout >>", "AddressAndPayment", "Checkout")
-</p>
+<div class="col-lg-10 col-md-8 col-sm-6 col-xs-4">
 
-<div id="update-message"></div>
+    <h3><em>Review</em> your cart:</h3>
 
-<table>
-    <tr>
-        <th>Album name</th>
-        <th>Price (each)</th>
-        <th>Quantity</th>
-        <th></th>
-    </tr>
-    @foreach (var item in Model.CartItems)
-    {
-        <tr id="row-@item.RecordId">
-            <td>
-                @Html.ActionLink(item.Album.Title, nameof(StoreManagerController.Details),
-                "Store", new { id = item.AlbumId }, null)
-            </td>
-            <td>
-                @item.Album.Price
-            </td>
-            <td id="item-count-@item.RecordId">
-                @item.Count
-            </td>
-            <td>
-                <a href="#" class="RemoveLink" data-id="@item.RecordId">Remove from cart</a>
-            </td>
+    <p class="button">
+        @Html.ActionLink("Checkout >>", "AddressAndPayment", "Checkout")
+    </p>
+
+    <div id="update-message"></div>
+
+    <table>
+        <tr>
+            <th>Album name</th>
+            <th>Price (each)</th>
+            <th>Quantity</th>
+            <th></th>
         </tr>
-    }
-    <tr>
-        <td>Total</td>
-        <td></td>
-        <td></td>
-        <td id="cart-total">@Model.CartTotal</td>
-    </tr>
-</table>
+        @foreach (var item in Model.CartItems)
+        {
+            <tr id="row-@item.RecordId">
+                <td>
+                    @Html.ActionLink(item.Album.Title, nameof(StoreManagerController.Details),
+                "Store", new { id = item.AlbumId }, null)
+                </td>
+                <td>
+                    @item.Album.Price
+                </td>
+                <td id="item-count-@item.RecordId">
+                    @item.Count
+                </td>
+                <td>
+                    <a href="#" class="RemoveLink" data-id="@item.RecordId">Remove from cart</a>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>Total</td>
+            <td></td>
+            <td></td>
+            <td id="cart-total">@Model.CartTotal</td>
+        </tr>
+    </table>
+</div>

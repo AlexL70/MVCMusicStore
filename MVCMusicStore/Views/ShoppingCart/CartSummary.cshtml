@@ -1,0 +1,7 @@
+﻿@using MVCMusicStore.Controllers
+@using MVCMusicStore.Models
+
+@Html.ActionLink($"Cart ({ViewData[$"{nameof(Cart)}{nameof(Cart.Count)}"]})",
+    nameof(ShoppingCartController.Index),
+    nameof(ShoppingCart),
+    new { id = "cart-status" })
