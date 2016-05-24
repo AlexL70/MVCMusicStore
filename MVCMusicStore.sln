@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCMusicStore", "MVCMusicSt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCMusicStore.Tests", "MVCMusicStore.Tests\MVCMusicStore.Tests.csproj", "{DC878CC0-8ADA-4E11-BCC3-9EF7C148F68F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractData", "ExtractData\ExtractData.csproj", "{625AE0B9-85C6-4E29-9061-D12C79972E2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{DC878CC0-8ADA-4E11-BCC3-9EF7C148F68F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC878CC0-8ADA-4E11-BCC3-9EF7C148F68F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC878CC0-8ADA-4E11-BCC3-9EF7C148F68F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{625AE0B9-85C6-4E29-9061-D12C79972E2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{625AE0B9-85C6-4E29-9061-D12C79972E2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{625AE0B9-85C6-4E29-9061-D12C79972E2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{625AE0B9-85C6-4E29-9061-D12C79972E2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
