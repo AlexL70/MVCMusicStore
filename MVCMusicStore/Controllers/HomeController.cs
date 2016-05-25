@@ -7,7 +7,17 @@ namespace MVCMusicStore.Controllers
 {
     public class HomeController : Controller
     {
-        private MusicStoreEntities db = new MusicStoreEntities();
+        private MusicStoreEntities db;
+
+        public HomeController() : base()
+        {
+            db = new MusicStoreEntities();
+        }
+
+        public HomeController(MusicStoreEntities context) : base()
+        {
+            db = context;
+        }
 
         public ActionResult Index()
         {

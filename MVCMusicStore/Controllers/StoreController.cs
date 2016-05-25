@@ -1,7 +1,5 @@
-﻿using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using MVCMusicStore.Models;
-using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity;
 
@@ -9,7 +7,17 @@ namespace MVCMusicStore.Controllers
 {
     public class StoreController : Controller
     {
-        MusicStoreEntities db = new MusicStoreEntities();
+        private MusicStoreEntities db;
+
+        public StoreController() : base()
+        {
+            db = new MusicStoreEntities();
+        }
+
+        public StoreController(MusicStoreEntities context) : base()
+        {
+            db = context;
+        }
 
         // GET: Store
         public ActionResult Index()
@@ -29,7 +37,8 @@ namespace MVCMusicStore.Controllers
         // GET: Store/Details/5
         public ActionResult Details(int id)
         {
-            var album = db.Albums.Find(id);
+            var album = db.Albums.Where(a => a.AlbumId == id).Single();
+            //var album = db.Albums.Find(id);
             return View(album);
         }
 
