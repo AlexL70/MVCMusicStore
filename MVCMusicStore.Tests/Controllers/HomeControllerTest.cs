@@ -23,6 +23,7 @@ namespace MVCMusicStore.Tests.Controllers
 
             // Assert
             Assert.IsNotNull(result);
+            //Assert.Equals("Index", result.ViewName);
         }
 
         [TestMethod]
