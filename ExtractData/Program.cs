@@ -10,14 +10,13 @@ namespace ExtractData
 {
     public class MStoreEntities : DbContext
     {
-        public static string BaseDir = "C:\\Projects\\Learning\\ASP.NET5\\MVCMusicStore";
+        public static string BaseDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\"));
 
         private static string ConnectionString()
         {
             SqlConnectionStringBuilder sqlBuilder = new SqlConnectionStringBuilder();
             sqlBuilder.DataSource = "(LocalDb)\\MSSQLLocalDB";
-            //sqlBuilder.AttachDBFilename = "..\\..\\..\\MVCMusicStore\\App_Data\\MVCMusicStore.mdf";
-            sqlBuilder.AttachDBFilename = $"{BaseDir}\\MVCMusicStore\\App_Data\\MVCMusicStore.mdf";
+            sqlBuilder.AttachDBFilename = $"{BaseDir}MVCMusicStore\\App_Data\\MVCMusicStore.mdf";
             sqlBuilder.InitialCatalog = "MVCMusicStore";
             //sqlBuilder.PersistSecurityInfo = true;
             sqlBuilder.IntegratedSecurity = true;
@@ -40,7 +39,7 @@ namespace ExtractData
         {
             MStoreEntities db = new MStoreEntities();
 
-            string TDDir = $"{MStoreEntities.BaseDir}\\MVCMusicStore\\App_TestData\\";
+            string TDDir = $"{MStoreEntities.BaseDir}MVCMusicStore\\App_TestData\\";
             var genres = db.Genres.Select(g => new { Name = g.Name}).ToList();
             var str = JsonConvert.SerializeObject(genres);
             File.WriteAllText($"{TDDir}Genres.json", str);
