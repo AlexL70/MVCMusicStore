@@ -7,7 +7,8 @@ namespace MVCMusicStore.Tests.Extensions
 {
     public static class DbSetExtensions
     {
-        public static Mock<DbSet<T>> GetQueryableMockDbSet<T>(this IEnumerable<T> sourceList) where T : class
+        public static Mock<DbSet<T>> GetQueryableMockDbSet<T>(this IEnumerable<T> sourceList)
+            where T : class
         {
             var queryable = sourceList.AsQueryable();
             var dbSet = new Mock<DbSet<T>>();

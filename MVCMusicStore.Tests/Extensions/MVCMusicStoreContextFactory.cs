@@ -9,6 +9,21 @@ using System.Data.Entity;
 
 namespace MVCMusicStore.Tests.Extensions
 {
+    public class GenreMock : Genre
+    {
+        public static IQueryable<Album> AllAlbums { get; set; }
+
+        public override List<Album> Albums
+        {
+            get
+            {
+                return AllAlbums.Where(a => a.GenreId == GenreId).ToList();
+            }
+
+            set { }
+        }
+    }
+
     public static class MVCMusicStoreContextFactory
     {
         private static string dataDir;
@@ -25,7 +40,7 @@ namespace MVCMusicStore.Tests.Extensions
             var context = new Mock<MusicStoreEntities>();
             //  Load Genres data
             var str = File.ReadAllText($"{dataDir}Genres.json");
-            var genres = JsonConvert.DeserializeObject<List<Genre>>(str);
+            var genres = JsonConvert.DeserializeObject<List<GenreMock>>(str);
             int i = 0;
             genres.ForEach(g => g.GenreId = ++i);
             //  Load Artists data
@@ -65,9 +80,10 @@ namespace MVCMusicStore.Tests.Extensions
                     AlbumArtUrl = albumTmp.AlbumArtUrl
                 });
             }
-            var mGenres = genres.GetQueryableMockDbSet();
+            var mGenres = genres.GetQueryableMockDbSet<Genre>();
             var mArtists = artists.GetQueryableMockDbSet();
             var mAlbums = albums.GetQueryableMockDbSet();
+            GenreMock.AllAlbums = mAlbums.Object;
             var mCarts = new Mock<DbSet<Cart>>();
             var mOrders = new Mock<DbSet<Order>>();
             var mOrderDetails = new Mock<DbSet<OrderDetail>>();
