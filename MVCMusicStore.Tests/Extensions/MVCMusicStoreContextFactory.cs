@@ -1,11 +1,11 @@
-﻿using Moq;
-using MVCMusicStore.Models;
+﻿using MVCMusicStore.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Data.Entity;
+using NSubstitute;
+using MockEfDbSet.Test.TestUtils;
 
 namespace MVCMusicStore.Tests.Extensions
 {
@@ -19,10 +19,9 @@ namespace MVCMusicStore.Tests.Extensions
             {
                 return AllAlbums.Where(a => a.GenreId == GenreId).ToList();
             }
-
-            set { }
         }
     }
+
 
     public static class MVCMusicStoreContextFactory
     {
@@ -37,7 +36,7 @@ namespace MVCMusicStore.Tests.Extensions
 
         public static MusicStoreEntities GetContext()
         {
-            var context = new Mock<MusicStoreEntities>();
+            var context = Substitute.For<MusicStoreEntities>();
             //  Load Genres data
             var str = File.ReadAllText($"{dataDir}Genres.json");
             var genres = JsonConvert.DeserializeObject<List<GenreMock>>(str);
@@ -80,24 +79,24 @@ namespace MVCMusicStore.Tests.Extensions
                     AlbumArtUrl = albumTmp.AlbumArtUrl
                 });
             }
-            var mGenres = genres.GetQueryableMockDbSet<Genre>();
-            var mArtists = artists.GetQueryableMockDbSet();
-            var mAlbums = albums.GetQueryableMockDbSet();
-            GenreMock.AllAlbums = mAlbums.Object;
-            var mCarts = new Mock<DbSet<Cart>>();
-            var mOrders = new Mock<DbSet<Order>>();
-            var mOrderDetails = new Mock<DbSet<OrderDetail>>();
-            context.Setup(c => c.Genres).Returns(mGenres.Object);
-            context.Setup(c => c.Artists).Returns(mArtists.Object);
-            context.Setup(c => c.Albums).Returns(mAlbums.Object);
-            context.Setup(c => c.Carts).Returns(mCarts.Object);
-            context.Setup(c => c.Orders).Returns(mOrders.Object);
-            context.Setup(c => c.OrderDetails).Returns(mOrderDetails.Object);
+            GenreMock.AllAlbums = albums.AsQueryable();
+            var mGenres = NSubstituteUtils.CreateMockDbSet<Genre>(genres);
+            var mArtists = NSubstituteUtils.CreateMockDbSet(artists);
+            var mAlbums = NSubstituteUtils.CreateMockDbSet(albums);
+            var mCarts = NSubstituteUtils.CreateMockDbSet<Cart>();
+            var mOrders = NSubstituteUtils.CreateMockDbSet<Order>();
+            var mOrderDetails = NSubstituteUtils.CreateMockDbSet<OrderDetail>();
+            context.Genres.Returns(mGenres);
+            context.Artists.Returns(mArtists);
+            context.Albums.Returns(mAlbums);
+            context.Carts.Returns(mCarts);
+            context.Orders.Returns(mOrders);
+            context.OrderDetails.Returns(mOrderDetails);
             foreach (var album in albums)
             {
-                mAlbums.Object.Add(album);
+                mAlbums.Add(album);
             }
-            return context.Object;
+            return context;
         }
     }
 }
