@@ -1,0 +1,3 @@
+[submodule "MockEfDbSetWithNSubstitute"]
+	path = MockEfDbSetWithNSubstitute
+	url = git@github.com:AlexL70/MockEfDbSetWithNSubstitute.git
