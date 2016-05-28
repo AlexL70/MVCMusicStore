@@ -11,19 +11,6 @@ using System.Data.Entity;
 
 namespace MVCMusicStore.Tests.Extensions
 {
-    public class GenreMock : Genre
-    {
-        public static IQueryable<Album> AllAlbums { get; set; }
-
-        public override List<Album> Albums
-        {
-            get
-            {
-                return AllAlbums.Where(a => a.GenreId == GenreId).ToList();
-            }
-        }
-    }
-
     public class UserMock : ApplicationUser
     {
         public static DbSet<IdentityUserRole> AllUserRoles;
@@ -89,9 +76,9 @@ namespace MVCMusicStore.Tests.Extensions
             var context = Substitute.For<MusicStoreEntities>();
             //  Load Genres data
             var str = File.ReadAllText($"{dataDir}Genres.json");
-            var genres = JsonConvert.DeserializeObject<List<GenreMock>>(str);
+            var genresRough = JsonConvert.DeserializeObject<List<Genre>>(str);
             int i = 0;
-            genres.ForEach(g => g.GenreId = ++i);
+            genresRough.ForEach(g => g.GenreId = ++i);
             //  Load Artists data
             str = File.ReadAllText($"{dataDir}Artists.json");
             var artists = JsonConvert.DeserializeObject<List<Artist>>(str);
@@ -116,7 +103,7 @@ namespace MVCMusicStore.Tests.Extensions
             foreach (var albumTmp in albumsTemp)
             {
                 var artist0 = artists.Single(a => a.Name == albumTmp.Artist);
-                var genre0 = genres.Single(g => g.Name == albumTmp.Genre);
+                var genre0 = genresRough.Single(g => g.Name == albumTmp.Genre);
                 albums.Add(new Album
                 {
                     AlbumId = ++albumId,
@@ -129,8 +116,15 @@ namespace MVCMusicStore.Tests.Extensions
                     AlbumArtUrl = albumTmp.AlbumArtUrl
                 });
             }
-            GenreMock.AllAlbums = albums.AsQueryable();
-            var mGenres = NSubstituteUtils.CreateMockDbSet<Genre>(genres);
+            var genres = new List<Genre>();
+            genresRough.ForEach(g => {
+                var mg = Substitute.For<Genre>();
+                mg.GenreId = g.GenreId;
+                mg.Name = g.Name;
+                mg.Description = g.Description;
+                genres.Add(mg);
+            });
+            var mGenres = NSubstituteUtils.CreateMockDbSet(genres);
             var mArtists = NSubstituteUtils.CreateMockDbSet(artists);
             var mAlbums = NSubstituteUtils.CreateMockDbSet(albums);
             var carts = new List<Cart>();
@@ -138,6 +132,9 @@ namespace MVCMusicStore.Tests.Extensions
             var mOrders = NSubstituteUtils.CreateMockDbSet<Order>();
             var mOrderDetails = NSubstituteUtils.CreateMockDbSet<OrderDetail>();
             context.Genres.Returns(mGenres);
+            genres.ForEach(g => {
+                g.Albums.Returns(albums.Where(a => a.GenreId == g.GenreId).ToList());
+            });
             context.Artists.Returns(mArtists);
             context.Albums.Returns(mAlbums);
             context.Carts.Returns(mCarts);
