@@ -8,23 +8,28 @@ namespace MVCMusicStore.Models
 {
     public class ShoppingCart
     {
-        MusicStoreEntities db = new MusicStoreEntities();
+        MusicStoreEntities db;
+
+        public ShoppingCart(MusicStoreEntities dbContext)
+        {
+            db = dbContext;
+        }
 
         private string ShoppingCartId { get; set; }
 
         public const string CartSessionKey = nameof(Cart.CartId);
 
-        public static ShoppingCart GetCart(HttpContextBase context)
+        public static ShoppingCart GetCart(HttpContextBase context, MusicStoreEntities dbContext)
         {
-            var cart = new ShoppingCart();
+            var cart = new ShoppingCart(dbContext);
             cart.ShoppingCartId = cart.GetCartId(context);
             return cart;
         }
 
         //  Helper method to simplify calling shopping cart from controller
-        public static ShoppingCart GetCart(Controller controller)
+        public static ShoppingCart GetCart(Controller controller, MusicStoreEntities dbContext)
         {
-            return GetCart(controller.HttpContext);
+            return GetCart(controller.HttpContext, dbContext);
         }
 
         public void AddToCart(Album album)

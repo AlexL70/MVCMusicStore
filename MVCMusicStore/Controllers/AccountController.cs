@@ -55,7 +55,7 @@ namespace MVCMusicStore.Controllers
         private void MigrateShoppingCart(string userName)
         {
             //  Associate shopping cart items with logged-in user
-            var cart = ShoppingCart.GetCart(this);
+            var cart = ShoppingCart.GetCart(this, new MusicStoreEntities());
             cart.MigrateCart(userName);
             Session[ShoppingCart.CartSessionKey] = userName;
         }

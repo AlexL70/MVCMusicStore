@@ -49,10 +49,43 @@ namespace MVCMusicStore.Models
 
     public class SampleUserData : DropCreateDatabaseIfModelChanges<ApplicationDbContext>
     {
+        public void pubSeed<TUser, TRole, TUserRole>(ApplicationDbContext context,
+            string adminUserEmail, string adminPwd, string customUserEmail, string customPwd)
+            where TUser : ApplicationUser, new()
+            where TRole : IdentityRole, new()
+            where TUserRole : IdentityUserRole, new()
+        {
+            var adminUser = new TUser
+            {
+                UserName = adminUserEmail,
+                PasswordHash = adminPwd,
+                SecurityStamp = Guid.NewGuid().ToString("D"),
+                Email = adminUserEmail
+            };
+            context.Users.AddOrUpdate(u => u.UserName, adminUser);
+            var custUser = new TUser
+            {
+                UserName = customUserEmail,
+                PasswordHash = customPwd,
+                SecurityStamp = Guid.NewGuid().ToString("D"),
+                Email = customUserEmail
+            };
+            context.Users.AddOrUpdate(u => u.UserName, custUser);
+            var adminRole = new TRole { Name = nameof(StdRoles.Administrators) };
+            context.Roles.AddOrUpdate(r => r.Name, adminRole);
+            var manRole = new TRole { Name = nameof(StdRoles.Managers) };
+            context.Roles.AddOrUpdate(r => r.Name, manRole);
+            var custRole = new TRole { Name = nameof(StdRoles.Customers) };
+            context.Roles.AddOrUpdate(r => r.Name, custRole);
+            context.SaveChanges();
+            adminRole.Users.Add(new TUserRole { UserId = adminUser.Id, RoleId = adminRole.Id });
+            manRole.Users.Add(new TUserRole { UserId = adminUser.Id, RoleId = manRole.Id });
+            custRole.Users.Add(new TUserRole { UserId = custUser.Id, RoleId = custRole.Id });
+        }
+
         protected override void Seed(ApplicationDbContext context)
         {
             var passwordHasher = new PasswordHasher();
-            //var adminUserEmail = configuration("AdminEmail");
             var adminUserEmail = WebConfigurationManager.AppSettings["AdminEmail"];
             var customUserEmail = WebConfigurationManager.AppSettings["CustomerEmail"];
             var adminPwd = passwordHasher.HashPassword(
@@ -61,38 +94,11 @@ namespace MVCMusicStore.Models
             var customPwd = passwordHasher.HashPassword(
                 WebConfigurationManager.AppSettings["CustomerPwd"]
                 );
-            var adminUser = new ApplicationUser
-            {
-                UserName = adminUserEmail,
-                PasswordHash = adminPwd,
-                SecurityStamp = Guid.NewGuid().ToString("D"),
-                Email = adminUserEmail
-            };
-            context.Users.AddOrUpdate(u => u.UserName, adminUser);
-            var custUser = new ApplicationUser
-            {
-                UserName = customUserEmail,
-                PasswordHash = customPwd,
-                SecurityStamp = Guid.NewGuid().ToString("D"),
-                Email = customUserEmail
-            };
-            context.Users.AddOrUpdate(u => u.UserName, custUser);
-            var adminRole = new IdentityRole { Name = nameof(StdRoles.Administrators) };
-            context.Roles.AddOrUpdate(r => r.Name, adminRole);
-            var manRole = new IdentityRole { Name = nameof(StdRoles.Managers) };
-            context.Roles.AddOrUpdate(r => r.Name, manRole);
-            var custRole = new IdentityRole { Name = nameof(StdRoles.Customers) };
-            context.Roles.AddOrUpdate(r => r.Name, custRole);
-            context.SaveChanges();
-            context.Roles.Where(r => r.Name == nameof(StdRoles.Administrators)).Single().Users.Add(
-                new IdentityUserRole { UserId = adminUser.Id }
-                );
-            context.Roles.Where(r => r.Name == nameof(StdRoles.Managers)).Single().Users.Add(
-                new IdentityUserRole { UserId = adminUser.Id }
-                );
-            context.Roles.Where(r => r.Name == nameof(StdRoles.Customers)).Single().Users.Add(
-                new IdentityUserRole { UserId = custUser.Id }
-                );
+            pubSeed<ApplicationUser, IdentityRole, IdentityUserRole>(context: context,
+                adminUserEmail: adminUserEmail,
+                adminPwd: adminPwd,
+                customUserEmail: customUserEmail,
+                customPwd: customPwd);
         }
     }
 }

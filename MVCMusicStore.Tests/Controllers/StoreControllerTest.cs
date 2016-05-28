@@ -13,10 +13,14 @@ namespace MVCMusicStore.Tests.Controllers
         private MusicStoreEntities context;
         private StoreController controller;
 
+        public StoreControllerTest()
+        {
+            context = ContextFactory.GetMusicStoreContext();
+        }
+
         [SetUp]
         public void SetupTest()
         {
-            context = MVCMusicStoreContextFactory.GetContext();
             controller = new StoreController(context);
         }
 

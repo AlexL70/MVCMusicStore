@@ -7,13 +7,23 @@ namespace MVCMusicStore.Controllers
 {
     public class ShoppingCartController : Controller
     {
-        private MusicStoreEntities db = new MusicStoreEntities();
+        private MusicStoreEntities db;
+
+        public ShoppingCartController()
+        {
+            db = new MusicStoreEntities();
+        }
+
+        public ShoppingCartController(MusicStoreEntities dbContext)
+        {
+            db = dbContext;
+        }
 
         // GET: /ShoppingCart/
         [HttpGet]
         public ActionResult Index()
         {
-            var cart = ShoppingCart.GetCart(this);
+            var cart = ShoppingCart.GetCart(this, db);
 
             //  Set up ViewModel
             var viewModel = new ShoppingCartViewModel
@@ -32,7 +42,7 @@ namespace MVCMusicStore.Controllers
             //  Get album from db
             var album = db.Albums.Single(a => a.AlbumId == albumId);
             //  Add album to shopping cart
-            var cart = ShoppingCart.GetCart(this);
+            var cart = ShoppingCart.GetCart(this, db);
             cart.AddToCart(album);
             //  Back to main page for more shopping
             return RedirectToAction(nameof(this.Index));
@@ -42,7 +52,7 @@ namespace MVCMusicStore.Controllers
         [HttpPost]
         public ActionResult RemoveFromCart(int recordId)
         {   //  Remove the item from the shopping cart
-            var cart = ShoppingCart.GetCart(this);
+            var cart = ShoppingCart.GetCart(this, db);
             //  Get the name of the album to display confirmation
             string albumTitle = db.Carts.Single(c => c.RecordId == recordId).Album.Title;
             //  Remove album from cart
@@ -64,7 +74,7 @@ namespace MVCMusicStore.Controllers
         [ChildActionOnly]
         public ActionResult CartSummary()
         {
-            var cart = ShoppingCart.GetCart(this);
+            var cart = ShoppingCart.GetCart(this, db);
             ViewData[$"{nameof(Cart)}{nameof(Cart.Count)}"] = cart.GetCount();
             return PartialView(nameof(this.CartSummary));
         }

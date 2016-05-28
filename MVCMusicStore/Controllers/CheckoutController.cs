@@ -39,7 +39,7 @@ namespace MVCMusicStore.Controllers
                     db.Orders.Add(order);
                     db.SaveChanges();
                     //  Process order
-                    var cart = ShoppingCart.GetCart(this);
+                    var cart = ShoppingCart.GetCart(this, db);
                     cart.CreateOrder(order);
                     return RedirectToAction(nameof(Complete),
                         new { orderId = order.OrderId });
