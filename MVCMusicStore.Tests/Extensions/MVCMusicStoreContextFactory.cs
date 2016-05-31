@@ -1,4 +1,5 @@
-﻿using MVCMusicStore.Models;
+﻿using System;
+using MVCMusicStore.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -102,29 +103,20 @@ namespace MVCMusicStore.Tests.Extensions
             int albumId = 0;
             foreach (var albumTmp in albumsTemp)
             {
-                var artist0 = artists.Single(a => a.Name == albumTmp.Artist);
-                var genre0 = genresRough.Single(g => g.Name == albumTmp.Genre);
-                albums.Add(new Album
+                var newAlbum = NSubstituteUtils.CreateMockEntity (new Album
                 {
                     AlbumId = ++albumId,
                     Title = albumTmp.Title,
-                    GenreId = genre0.GenreId,
-                    Genre = genre0,
+                    GenreId = genresRough.Single(g => g.Name == albumTmp.Genre).GenreId,
                     Price = albumTmp.Price,
-                    ArtistId = artist0.ArtistId,
-                    Artist = artist0,
+                    ArtistId = artists.Single(a => a.Name == albumTmp.Artist).ArtistId,
                     AlbumArtUrl = albumTmp.AlbumArtUrl
                 });
+                NSubstituteUtils.SetMockVirtualProp(newAlbum, nameof(Album.Artist), al => artists.Single(a => a.ArtistId == al.ArtistId));
+                albums.Add(newAlbum);
             }
             var genres = new List<Genre>();
-            genresRough.ForEach(g =>
-            {
-                var mg = Substitute.For<Genre>();
-                mg.GenreId = g.GenreId;
-                mg.Name = g.Name;
-                mg.Description = g.Description;
-                genres.Add(mg);
-            });
+            genresRough.ForEach(g => genres.Add(NSubstituteUtils.CreateMockEntity(g)));
             var mGenres = NSubstituteUtils.CreateMockDbSet(genres);
             var mArtists = NSubstituteUtils.CreateMockDbSet(artists);
             var mAlbums = NSubstituteUtils.CreateMockDbSet(albums);
@@ -133,10 +125,10 @@ namespace MVCMusicStore.Tests.Extensions
             var mOrders = NSubstituteUtils.CreateMockDbSet<Order>();
             var mOrderDetails = NSubstituteUtils.CreateMockDbSet<OrderDetail>();
             context.Genres.Returns(mGenres);
-            genres.ForEach(g =>
-            {
-                g.Albums.Returns(albums.Where(a => a.GenreId == g.GenreId).ToList());
-            });
+            genres.ForEach(gnr => NSubstituteUtils.SetMockVirtualProp(gnr, nameof(Genre.Albums),
+                g => albums.Where(a => a.GenreId == g.GenreId).ToList()));
+            albums.ForEach(alb => NSubstituteUtils.SetMockVirtualProp(alb, nameof(Album.Genre), 
+                al => genres.Single(g => g.GenreId == al.GenreId)));
             context.Artists.Returns(mArtists);
             context.Albums.Returns(mAlbums);
             context.Carts.Returns(mCarts);
@@ -144,13 +136,9 @@ namespace MVCMusicStore.Tests.Extensions
             {
                 var cart = (Cart)x[0];
                 cart.RecordId = carts.Count > 0 ? (carts.Select(c => c.RecordId).Max()) + 1 : 1;
-                Cart mCart = Substitute.For<Cart>();
-                mCart.AlbumId = cart.AlbumId;
-                mCart.RecordId = cart.RecordId;
-                mCart.CartId = cart.CartId;
-                mCart.Count = cart.Count;
-                mCart.DateCreated = cart.DateCreated;
-                mCart.Album.Returns(albums.Where(a => a.AlbumId == cart.AlbumId).SingleOrDefault());
+                var mCart = NSubstituteUtils.CreateMockEntity(cart);
+                NSubstituteUtils.SetMockVirtualProp(mCart, nameof(Cart.Album),
+                    crt => albums.Where(a => a.AlbumId == crt.AlbumId).SingleOrDefault());
                 carts.Add(mCart);
             });
             context.Carts.When(crt => crt.Remove(Arg.Any<Cart>())).Do(x => {
@@ -158,10 +146,6 @@ namespace MVCMusicStore.Tests.Extensions
             });
             context.Orders.Returns(mOrders);
             context.OrderDetails.Returns(mOrderDetails);
-            foreach (var album in albums)
-            {
-                mAlbums.Add(album);
-            }
             return context;
         }
 

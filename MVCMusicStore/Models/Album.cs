@@ -7,6 +7,23 @@ namespace MVCMusicStore.Models
     //[Bind(Exclude = nameof(Album.AlbumId))]
     public class Album
     {
+        public Album() : base() { }
+        public Album(
+            int albumId,
+            int genreId,
+            int artistId,
+            string title,
+            decimal price,
+            string albumArtUrl
+            )
+        {
+            AlbumId = albumId;
+            GenreId = genreId;
+            ArtistId = artistId;
+            Title = title;
+            Price = price;
+            AlbumArtUrl = albumArtUrl;
+        }
         [ScaffoldColumn(false)]
         public int AlbumId { get; set; }
         [DisplayName("Genre")]
