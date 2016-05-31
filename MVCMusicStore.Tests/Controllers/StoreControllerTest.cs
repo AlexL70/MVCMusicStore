@@ -7,7 +7,7 @@ using MVCMusicStore.Tests.Extensions;
 
 namespace MVCMusicStore.Tests.Controllers
 {
-    [TestFixture]
+    [TestFixture, Category(nameof(StoreController))]
     public class StoreControllerTest
     {
         private MusicStoreEntities context;

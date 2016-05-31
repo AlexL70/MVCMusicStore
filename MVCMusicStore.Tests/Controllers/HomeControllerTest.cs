@@ -9,7 +9,7 @@ using MVCMusicStore.Controllers;
 
 namespace MVCMusicStore.Tests.Controllers
 {
-    [TestFixture]
+    [TestFixture, Category(nameof(HomeController))]
     public class HomeControllerTest
     {
         [Test]

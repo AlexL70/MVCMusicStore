@@ -117,7 +117,8 @@ namespace MVCMusicStore.Tests.Extensions
                 });
             }
             var genres = new List<Genre>();
-            genresRough.ForEach(g => {
+            genresRough.ForEach(g =>
+            {
                 var mg = Substitute.For<Genre>();
                 mg.GenreId = g.GenreId;
                 mg.Name = g.Name;
@@ -132,13 +133,29 @@ namespace MVCMusicStore.Tests.Extensions
             var mOrders = NSubstituteUtils.CreateMockDbSet<Order>();
             var mOrderDetails = NSubstituteUtils.CreateMockDbSet<OrderDetail>();
             context.Genres.Returns(mGenres);
-            genres.ForEach(g => {
+            genres.ForEach(g =>
+            {
                 g.Albums.Returns(albums.Where(a => a.GenreId == g.GenreId).ToList());
             });
             context.Artists.Returns(mArtists);
             context.Albums.Returns(mAlbums);
             context.Carts.Returns(mCarts);
-            context.Carts.When(crt => crt.Add(Arg.Any<Cart>())).Do(Callback.Always(x => carts.Add((Cart)x[0])));
+            context.Carts.When(crt => crt.Add(Arg.Any<Cart>())).Do(x =>
+            {
+                var cart = (Cart)x[0];
+                cart.RecordId = carts.Count > 0 ? (carts.Select(c => c.RecordId).Max()) + 1 : 1;
+                Cart mCart = Substitute.For<Cart>();
+                mCart.AlbumId = cart.AlbumId;
+                mCart.RecordId = cart.RecordId;
+                mCart.CartId = cart.CartId;
+                mCart.Count = cart.Count;
+                mCart.DateCreated = cart.DateCreated;
+                mCart.Album.Returns(albums.Where(a => a.AlbumId == cart.AlbumId).SingleOrDefault());
+                carts.Add(mCart);
+            });
+            context.Carts.When(crt => crt.Remove(Arg.Any<Cart>())).Do(x => {
+                carts.Remove((Cart)x[0]);
+            });
             context.Orders.Returns(mOrders);
             context.OrderDetails.Returns(mOrderDetails);
             foreach (var album in albums)
