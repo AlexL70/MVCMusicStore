@@ -8,59 +8,10 @@ using System.Linq;
 using NSubstitute;
 using MockEfDbSet.Test.TestUtils;
 using Microsoft.AspNet.Identity.EntityFramework;
-using System.Data.Entity;
+
 
 namespace MVCMusicStore.Tests.Extensions
 {
-    public class UserMock : ApplicationUser
-    {
-        public static DbSet<IdentityUserRole> AllUserRoles;
-        public static DbSet<IdentityRole> AllRoles;
-        public static DbSet<ApplicationUser> AllUsers;
-        public UserMock() : base()
-        {
-
-        }
-
-        public override ICollection<IdentityUserRole> Roles
-        {
-            get
-            {
-                return AllUserRoles.Where(ur => ur.UserId == Id).ToList();
-            }
-        }
-    }
-
-    public class RoleMock : IdentityRole
-    {
-        public static DbSet<IdentityUserRole> AllUserRoles;
-        public static DbSet<IdentityRole> AllRoles;
-        public static DbSet<ApplicationUser> AllUsers;
-        public RoleMock() : base()
-        {
-
-        }
-
-        public override ICollection<IdentityUserRole> Users
-        {
-            get
-            {
-                return AllUserRoles.ToList();
-            }
-        }
-    }
-
-    public class UserRoleMock : IdentityUserRole
-    {
-        public static DbSet<IdentityUserRole> AllUserRoles;
-        public static DbSet<IdentityRole> AllRoles;
-        public static DbSet<ApplicationUser> AllUsers;
-        public UserRoleMock() : base()
-        {
-
-        }
-    }
-
     public static class ContextFactory
     {
         private static string dataDir;
@@ -122,8 +73,10 @@ namespace MVCMusicStore.Tests.Extensions
             var mAlbums = NSubstituteUtils.CreateMockDbSet(albums);
             var carts = new List<Cart>();
             var mCarts = NSubstituteUtils.CreateMockDbSet(carts);
-            var mOrders = NSubstituteUtils.CreateMockDbSet<Order>();
-            var mOrderDetails = NSubstituteUtils.CreateMockDbSet<OrderDetail>();
+            var orders = new List<Order>();
+            var mOrders = NSubstituteUtils.CreateMockDbSet(orders);
+            var orderDetails = new List<OrderDetail>();
+            var mOrderDetails = NSubstituteUtils.CreateMockDbSet(orderDetails);
             context.Genres.Returns(mGenres);
             genres.ForEach(gnr => NSubstituteUtils.SetMockVirtualProp(gnr, nameof(Genre.Albums),
                 g => albums.Where(a => a.GenreId == g.GenreId).ToList()));
@@ -146,6 +99,8 @@ namespace MVCMusicStore.Tests.Extensions
             });
             context.Orders.Returns(mOrders);
             context.OrderDetails.Returns(mOrderDetails);
+            albums.ForEach(alb => NSubstituteUtils.SetMockVirtualProp(alb, nameof(Album.OrderDetails),
+                al => orderDetails.Where(od => od.AlbumId == al.AlbumId).ToList()));
             return context;
         }
 
@@ -160,19 +115,29 @@ namespace MVCMusicStore.Tests.Extensions
             var mUserRoles = NSubstituteUtils.CreateMockDbSet<IdentityUserRole>();
             context.Users.Returns(mUsers);
             context.Roles.Returns(mRoles);
-            UserMock.AllUsers = mUsers;
-            UserMock.AllRoles = mRoles;
-            UserMock.AllUserRoles = mUserRoles;
-            RoleMock.AllUsers = mUsers;
-            RoleMock.AllRoles = mRoles;
-            RoleMock.AllUserRoles = mUserRoles;
-            //context.Users.Single().Ro
+            context.Users.When(usr => usr.Add(Arg.Any<ApplicationUser>())).Do(x => {
+                var user = (ApplicationUser)x[0];
+                var mUser = NSubstituteUtils.CreateMockEntity(user);
+                mUsers.Add(mUser);
+            });
+            context.Users.When(usr => usr.Remove(Arg.Any<ApplicationUser>())).Do(x => {
+                mUsers.Remove((ApplicationUser)x[0]);
+            });
+            context.Roles.When(rl => rl.Add(Arg.Any<IdentityRole>())).Do(x => {
+                var role = (IdentityRole)x[0];
+                var mRole = NSubstituteUtils.CreateMockEntity(role);
+                mRoles.Add(mRole);
+            });
+            context.Roles.When(rl => rl.Add(Arg.Any<IdentityRole>())).Do(x => {
+                mRoles.Remove((IdentityRole)x[0]);
+            });
             var sd = new SampleUserData();
-            sd.pubSeed<UserMock, RoleMock, UserRoleMock>(context: context,
+            sd.pubSeed<ApplicationUser, IdentityRole, IdentityUserRole>(context: context,
                 adminUserEmail: adminUserEmail,
                 adminPwd: adminPwd,
                 customUserEmail: customUserEmail,
                 customPwd: customPwd);
+
             return context;
         }
     }

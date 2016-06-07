@@ -6,18 +6,37 @@ using System.Web.Mvc;
 using NUnit.Framework;
 using MVCMusicStore;
 using MVCMusicStore.Controllers;
+using MVCMusicStore.Models;
+using MVCMusicStore.Tests.Extensions;
 
 namespace MVCMusicStore.Tests.Controllers
 {
     [TestFixture, Category(nameof(HomeController))]
     public class HomeControllerTest
     {
+        private MusicStoreEntities context;
+        private HomeController controller;
+
+        public HomeControllerTest()
+        {
+            context = ContextFactory.GetMusicStoreContext();
+        }
+
+        [SetUp]
+        public void SetUpTest()
+        {
+            controller = new HomeController(context);
+        }
+
+        [TearDown]
+        public void TearDownTest()
+        {
+            controller.Dispose();
+        }
+
         [Test]
         public void Index()
         {
-            // Arrange
-            HomeController controller = new HomeController();
-
             // Act
             ViewResult result = controller.Index() as ViewResult;
 
@@ -29,9 +48,6 @@ namespace MVCMusicStore.Tests.Controllers
         [Test]
         public void About()
         {
-            // Arrange
-            HomeController controller = new HomeController();
-
             // Act
             ViewResult result = controller.About() as ViewResult;
 
@@ -42,9 +58,6 @@ namespace MVCMusicStore.Tests.Controllers
         [Test]
         public void Contact()
         {
-            // Arrange
-            HomeController controller = new HomeController();
-
             // Act
             ViewResult result = controller.Contact() as ViewResult;
 
