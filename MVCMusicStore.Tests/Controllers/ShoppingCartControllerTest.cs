@@ -19,10 +19,6 @@ namespace MVCMusicStore.Tests.Controllers
         private MusicStoreEntities dbContect;
         private ApplicationDbContext dbSecContext;
         private ShoppingCartController controller;
-        private const string adminEmail = "admin@store.com";
-        private const string adminPwd = "admin";
-        private const string userEmail = "user@store.com";
-        private const string userPwd = "user";
         private Dictionary<string, string> strSessionParams;
 
         private HttpContextBase context;
@@ -33,11 +29,7 @@ namespace MVCMusicStore.Tests.Controllers
         public ShoppingCartControllerTest()
         {
             dbContect = ContextFactory.GetMusicStoreContext();
-            dbSecContext = ContextFactory.GetAppContext(
-                adminUserEmail: adminEmail,
-                adminPwd: adminPwd,
-                customUserEmail: userEmail,
-                customPwd: userPwd);
+            dbSecContext = ContextFactory.GetAppContext();
             strSessionParams = new Dictionary<string, string>();
         }
 

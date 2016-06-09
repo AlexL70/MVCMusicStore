@@ -15,6 +15,10 @@ namespace MVCMusicStore.Tests.Extensions
     public static class ContextFactory
     {
         private static string dataDir;
+        public const string adminUserEmail = "admin@store.com";
+        public const string adminPwd = "admin";
+        public const string customUserEmail = "user@store.com";
+        public const string customPwd = "user";
 
         static ContextFactory()
         {
@@ -104,10 +108,7 @@ namespace MVCMusicStore.Tests.Extensions
             return context;
         }
 
-        public static ApplicationDbContext GetAppContext(
-            string adminUserEmail, string adminPwd,
-            string customUserEmail, string customPwd
-            )
+        public static ApplicationDbContext GetAppContext()
         {
             var context = Substitute.For<ApplicationDbContext>();
             var mUsers = NSubstituteUtils.CreateMockDbSet<ApplicationUser>();
